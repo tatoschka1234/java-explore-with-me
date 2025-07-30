@@ -23,9 +23,9 @@ services:
       - POSTGRES_USER=stats_user
       - POSTGRES_PASSWORD=stats_psw
 
-#  ewm-service:
-#    ports:
-#      - "8080:8080"
-#
-#  ewm-db:
-#    image: postgres:16.1
+  ewm-service:
+    ports:
+      - "8080:8080"
+
+  ewm-db:
+    image: postgres:16.1
