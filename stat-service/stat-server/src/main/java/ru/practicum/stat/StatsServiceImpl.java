@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.stat.dto.EndpointHitDto;
 import ru.practicum.stat.dto.ViewStatsDto;
+import ru.practicum.stat.dto.ViewStatsRequestDto;
 import ru.practicum.stat.entity.EndpointHit;
 import ru.practicum.stat.mapper.StatsMapper;
 import ru.practicum.stat.repository.StatsRepository;
@@ -24,15 +25,21 @@ public class StatsServiceImpl implements StatsService {
     }
 
     @Override
-    public List<ViewStatsDto> getStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
-        if (start.isAfter(end)) {
-            throw new IllegalArgumentException("Start date must be before end date.");
-        }
+    public List<ViewStatsDto> getStats(ViewStatsRequestDto request) {
+        LocalDateTime start = request.getStart();
+        LocalDateTime end = request.getEnd();
+        List<String> uris = request.getUris();
+        boolean unique = request.isUnique();
+
         if (uris == null || uris.isEmpty()) {
-            uris = repository.findAll().stream().map(EndpointHit::getUri).distinct().toList();
+            return unique
+                    ? repository.findStatsWithUniqueIp(start, end)
+                    : repository.findStats(start, end);
         }
+
         return unique
-                ? repository.getUniqueStats(start, end, uris)
-                : repository.getAllStats(start, end, uris);
+                ? repository.findStatsWithUniqueIp(start, end, uris)
+                : repository.findStats(start, end, uris);
     }
+
 }

@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.stat.dto.EndpointHitDto;
 import ru.practicum.stat.dto.ViewStatsDto;
-import ru.practicum.stat.StatsService;
+import ru.practicum.stat.dto.ViewStatsRequestDto;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -32,6 +32,14 @@ public class StatsController {
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") boolean unique
     ) {
-        return service.getStats(start, end, uris, unique);
+        ViewStatsRequestDto request = ViewStatsRequestDto.builder()
+                .start(start)
+                .end(end)
+                .uris(uris)
+                .unique(unique)
+                .build();
+
+        return service.getStats(request);
     }
+
 }
