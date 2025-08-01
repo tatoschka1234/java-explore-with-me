@@ -33,6 +33,14 @@ services:
     build: ./main-service
     ports:
       - "8080:8080"
+    depends_on:
+      ewm-db:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://ewm-db:5432/ewm
+      - SPRING_DATASOURCE_USERNAME=ewm_user
+      - SPRING_DATASOURCE_PASSWORD=ewm_psw
+      #- STAT_SERVER_URL=http://stats-server:9090
 
   ewm-db:
     image: postgres:16.1
@@ -43,3 +51,8 @@ services:
       - POSTGRES_DB=ewm
       - POSTGRES_USER=ewm_user
       - POSTGRES_PASSWORD=ewm_psw
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "ewm", "-U", "ewm_user" ]
+      timeout: 5s
+      interval: 5s
+      retries: 10
