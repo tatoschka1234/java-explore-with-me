@@ -24,12 +24,14 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findAllPublished(Pageable pageable);
 
     @Query("""
-            SELECT e FROM Event e
-            WHERE (:users IS NULL OR e.initiator.id IN :users)
-              AND (:states IS NULL OR e.state IN :states)
-              AND (:categories IS NULL OR e.category.id IN :categories)
-              AND (:rangeStart IS NULL OR e.eventDate >= :rangeStart)
-              AND (:rangeEnd   IS NULL OR e.eventDate <= :rangeEnd)
+            SELECT e
+            FROM Event e
+            WHERE ((:states IS NULL) OR (e.state IN :states))
+              AND ((:categories IS NULL) OR (e.category.id IN :categories))
+              AND ((:users IS NULL) OR (e.initiator.id IN :users))
+              AND (e.eventDate >= COALESCE(:rangeStart, e.eventDate))
+              AND (e.eventDate <= COALESCE(:rangeEnd, e.eventDate))
+            ORDER BY e.createdOn ASC
             """)
     Page<Event> getEventsByAdmin(@Param("users") List<Long> users,
                                  @Param("states") List<EventState> states,
@@ -40,22 +42,37 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
 
     @Query("""
-            SELECT e FROM Event e
+            SELECT e
+            FROM Event e
             WHERE e.state = 'PUBLISHED'
-              AND (
-                   :pattern IS NULL
-                   OR LOWER(e.annotation)  LIKE :pattern
-                   OR LOWER(e.description) LIKE :pattern
-              )
-              AND (:paid IS NULL OR e.paid = :paid)
-              AND (:rangeStart IS NULL OR e.eventDate >= :rangeStart)
-              AND (:rangeEnd   IS NULL OR e.eventDate <= :rangeEnd)
+              AND ((:text IS NULL)
+                OR (LOWER(e.description) LIKE LOWER(CONCAT('%', :text, '%')))
+                OR (LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%'))))
+              AND ((:paid IS NULL) OR (e.paid = :paid))
+              AND (e.eventDate >= COALESCE(:rangeStart, e.eventDate))
+              AND (e.eventDate <= COALESCE(:rangeEnd, e.eventDate))
+            ORDER BY e.createdOn ASC
             """)
-    Page<Event> searchPublishedEvents(@Param("pattern") String pattern,
+    Page<Event> searchPublishedEvents(@Param("text") String text,
                                       @Param("paid") Boolean paid,
                                       @Param("rangeStart") LocalDateTime rangeStart,
                                       @Param("rangeEnd") LocalDateTime rangeEnd,
                                       Pageable pageable);
+
+    @Query("""
+            SELECT e
+            FROM Event e
+            WHERE e.state = 'PUBLISHED'
+              AND ((:categories IS NULL) OR (e.category.id IN :categories))
+              AND ((:paid IS NULL) OR (e.paid = :paid))
+              AND (e.eventDate >= COALESCE(:rangeStart, e.eventDate))
+              AND (e.eventDate <= COALESCE(:rangeEnd, e.eventDate))
+            ORDER BY e.createdOn ASC
+            """)
+    Page<Event> searchPublishedEventsNoText(@Param("categories") List<Long> categories,
+                                            @Param("paid") Boolean paid,
+                                            @Param("rangeStart") LocalDateTime rangeStart,
+                                            @Param("rangeEnd") LocalDateTime rangeEnd, Pageable pageable);
 
     Optional<Event> findByIdAndInitiatorId(Long eventId, Long initiatorId);
 
