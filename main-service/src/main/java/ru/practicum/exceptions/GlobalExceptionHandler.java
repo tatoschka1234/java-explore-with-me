@@ -88,4 +88,15 @@ public class GlobalExceptionHandler {
         return buildError(e.getMessage(), "Forbidden", HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> handleUnexpected(final Exception e) {
+        log.error("500 Internal Server Error", e);
+        return buildError(
+                e.getMessage(),
+                "Internal server error",
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
+    }
+
+
 }
