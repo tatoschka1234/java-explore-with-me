@@ -59,4 +59,3 @@ public class CompilationAdminController {
         return service.update(compId, dto);
     }
 }
-

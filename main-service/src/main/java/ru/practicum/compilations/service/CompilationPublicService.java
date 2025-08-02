@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface CompilationPublicService {
     List<CompilationDto> getAll(Boolean pinned, int from, int size);
+
     CompilationDto getById(Long compId);
 }

@@ -6,10 +6,16 @@ import ru.practicum.compilations.dto.UpdateCompilationRequest;
 
 public interface CompilationAdminService {
     CompilationDto create(NewCompilationDto dto);
+
     void delete(Long compId);
+
     void addEvent(Long compId, Long eventId);
+
     void removeEvent(Long compId, Long eventId);
+
     void pin(Long compId);
+
     void unpin(Long compId);
+
     CompilationDto update(Long compId, UpdateCompilationRequest dto);
 }
