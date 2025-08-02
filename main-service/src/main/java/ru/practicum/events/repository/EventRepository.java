@@ -39,14 +39,19 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                  Pageable pageable);
 
 
-    @Query("SELECT e FROM Event e " +
-            "WHERE e.state = 'PUBLISHED' " +
-            "AND (:text IS NULL OR LOWER(e.annotation) LIKE LOWER(CONCAT('%', :text, '%')) " +
-            "     OR LOWER(e.description) LIKE LOWER(CONCAT('%', :text, '%'))) " +
-            "AND (:paid IS NULL OR e.paid = :paid) " +
-            "AND (:rangeStart IS NULL OR e.eventDate >= :rangeStart) " +
-            "AND (:rangeEnd IS NULL OR e.eventDate <= :rangeEnd)")
-    Page<Event> searchPublishedEvents(@Param("text") String text,
+    @Query("""
+            SELECT e FROM Event e
+            WHERE e.state = 'PUBLISHED'
+              AND (
+                   :pattern IS NULL
+                   OR LOWER(e.annotation)  LIKE :pattern
+                   OR LOWER(e.description) LIKE :pattern
+              )
+              AND (:paid IS NULL OR e.paid = :paid)
+              AND (:rangeStart IS NULL OR e.eventDate >= :rangeStart)
+              AND (:rangeEnd   IS NULL OR e.eventDate <= :rangeEnd)
+            """)
+    Page<Event> searchPublishedEvents(@Param("pattern") String pattern,
                                       @Param("paid") Boolean paid,
                                       @Param("rangeStart") LocalDateTime rangeStart,
                                       @Param("rangeEnd") LocalDateTime rangeEnd,

@@ -48,8 +48,18 @@ public class EventPublicServiceImpl implements EventPublicService {
         saveHit(request);
 
         Pageable pageable = PageRequest.of(filter.getPage(), filter.getSize());
+        String pattern = null;
+        if (filter.getText() != null && !filter.getText().isBlank()) {
+            pattern = "%" + filter.getText().toLowerCase() + "%";
+        }
+        LocalDateTime start = filter.getRangeStart();
+        LocalDateTime end   = filter.getRangeEnd();
         Page<Event> events = eventRepository.searchPublishedEvents(
-                filter.getText(), filter.getPaid(), filter.getRangeStart(), filter.getRangeEnd(), pageable
+                pattern,
+                filter.getPaid(),
+                start,
+                end,
+                pageable
         );
 
         List<String> uris = events.getContent().stream()
