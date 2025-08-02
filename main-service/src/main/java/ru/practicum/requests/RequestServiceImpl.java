@@ -16,7 +16,7 @@ import ru.practicum.requests.dto.EventRequestStatusUpdateResult;
 import ru.practicum.requests.dto.ParticipationRequestDto;
 import ru.practicum.requests.mapper.RequestMapper;
 import ru.practicum.users.model.User;
-import ru.practicum.users.model.UserRepository;
+import ru.practicum.users.repository.UserRepository;
 
 
 import java.time.LocalDateTime;

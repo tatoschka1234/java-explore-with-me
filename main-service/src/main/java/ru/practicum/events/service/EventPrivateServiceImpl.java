@@ -19,7 +19,7 @@ import ru.practicum.events.repository.EventRepository;
 import ru.practicum.exceptions.ConflictException;
 import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.users.model.User;
-import ru.practicum.users.model.UserService;
+import ru.practicum.users.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.List;

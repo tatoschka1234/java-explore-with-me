@@ -7,7 +7,7 @@ import ru.practicum.events.dto.LocationDto;
 import ru.practicum.events.dto.NewEventDto;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.model.Location;
-import ru.practicum.users.model.UserMapper;
+import ru.practicum.users.mapper.UserMapper;
 
 public class EventMapper {
 
