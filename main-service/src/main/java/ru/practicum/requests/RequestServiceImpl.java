@@ -134,7 +134,7 @@ public class RequestServiceImpl implements RequestService {
         long available = (limit == 0) ? Long.MAX_VALUE : Math.max(0, (long) limit - confirmed);
 
         List<Request> toConfirm = new ArrayList<>();
-        List<Request> toReject  = new ArrayList<>();
+        List<Request> toReject = new ArrayList<>();
 
         switch (body.getStatus()) {
             case CONFIRMED -> {
