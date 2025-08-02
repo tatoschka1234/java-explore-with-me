@@ -32,7 +32,7 @@ public class NewEventDto {
     private LocalDateTime eventDate;
 
     @NotNull
-    private Long category;  // categoryId
+    private Long category;
 
     private Boolean paid = false;
 

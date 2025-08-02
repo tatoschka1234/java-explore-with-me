@@ -15,6 +15,7 @@ import ru.practicum.events.mapper.EventMapper;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.model.EventState;
 import ru.practicum.events.repository.EventRepository;
+import ru.practicum.exceptions.BadRequestException;
 import ru.practicum.exceptions.ConflictException;
 import ru.practicum.exceptions.NotFoundException;
 
@@ -38,7 +39,13 @@ public class EventAdminServiceImpl implements EventAdminService {
                                                Integer from,
                                                Integer size) {
 
-        //checkStartIsBeforeEnd(rangeStart, rangeEnd);
+        if (rangeStart != null && rangeEnd != null) {
+            if (!rangeStart.isBefore(rangeEnd)) {
+                throw new BadRequestException(
+                        String.format("rangeStart must be before rangeEnd (got %s .. %s)", rangeStart, rangeEnd)
+                );
+            }
+        }
 
         if (users != null && users.isEmpty()) users = null;
         if (states != null && states.isEmpty()) states = null;
@@ -75,12 +82,17 @@ public class EventAdminServiceImpl implements EventAdminService {
             }
         }
 
-
         if (r.getCategory() != null) {
             Category category = categoryRepo.findById(r.getCategory())
                     .orElseThrow(() -> new NotFoundException("Category " + r.getCategory() + " not found"));
             e.setCategory(category);
         }
+        if (r.getTitle() != null) e.setTitle(r.getTitle());
+        if (r.getAnnotation() != null) e.setAnnotation(r.getAnnotation());
+        if (r.getDescription() != null) e.setDescription(r.getDescription());
+        if (r.getParticipantLimit() != null) e.setParticipantLimit(r.getParticipantLimit());
+        if (r.getRequestModeration() != null) e.setRequestModeration(r.getRequestModeration());
+        if (r.getPaid() != null) e.setPaid(r.getPaid());
 
         Event saved = eventRepo.save(e);
         return EventMapper.toFullDto(saved, saved.getViews());

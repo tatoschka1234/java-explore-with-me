@@ -22,9 +22,10 @@ public class AdminCategoryController {
         return categoryService.create(dto);
     }
 
-    @PatchMapping
-    public CategoryDto update(@RequestBody @Valid CategoryDto dto) {
-        return categoryService.update(dto);
+    @PatchMapping("/{catId}")
+    public CategoryDto update(@PathVariable("catId") Long catId,
+                              @RequestBody @Valid NewCategoryDto req) {
+        return categoryService.update(catId, req);
     }
 
     @DeleteMapping("/{catId}")

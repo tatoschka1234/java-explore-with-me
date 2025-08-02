@@ -1,10 +1,12 @@
 package ru.practicum.compilations.service;
 
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.compilations.dto.CompilationDto;
 import ru.practicum.compilations.dto.NewCompilationDto;
+import ru.practicum.compilations.dto.UpdateCompilationRequest;
 import ru.practicum.compilations.mapper.CompilationMapper;
 import ru.practicum.compilations.model.Compilation;
 import ru.practicum.compilations.repository.CompilationRepository;
@@ -14,6 +16,7 @@ import ru.practicum.events.repository.EventRepository;
 import ru.practicum.exceptions.NotFoundException;
 
 import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -78,5 +81,23 @@ public class CompilationAdminServiceImpl implements CompilationAdminService {
     private Event getEvent(Long id) {
         return eventRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
+    }
+
+    @Transactional
+    public CompilationDto update(Long compId, UpdateCompilationRequest dto) {
+        Compilation c = compilationRepository.findById(compId)
+                .orElseThrow(() -> new NotFoundException("Compilation not found"));
+
+        if (dto.getTitle() != null)  c.setTitle(dto.getTitle());
+        if (dto.getPinned() != null) c.setPinned(dto.getPinned());
+
+        if (dto.getEvents() != null) {
+            Set<Event> events = dto.getEvents().isEmpty()
+                    ? new HashSet<>()
+                    : new HashSet<>(eventRepository.findAllById(dto.getEvents()));
+            c.setEvents(events);
+        }
+
+        return CompilationMapper.toDto(compilationRepository.save(c));
     }
 }

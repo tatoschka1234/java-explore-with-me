@@ -33,12 +33,6 @@ public class GlobalExceptionHandler {
         return buildError(e.getMessage(), "Integrity constraint violation", HttpStatus.CONFLICT);
     }
 
-//    @ExceptionHandler
-//    public ResponseEntity<ErrorResponse> handleOther(final Exception e) {
-//        log.error("500 Internal Server Error: {}", e.getMessage(), e);
-//        return buildError(e.getMessage(), "Unexpected error", HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
-
     private ResponseEntity<ErrorResponse> buildError(String message, String reason, HttpStatus status) {
         ErrorResponse body = ErrorResponse.builder()
                 .message(message)
@@ -88,5 +82,10 @@ public class GlobalExceptionHandler {
                 .build();
     }
 
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleForbidden(ForbiddenException e) {
+        log.warn("403 Forbidden: {}", e.getMessage());
+        return buildError(e.getMessage(), "Forbidden", HttpStatus.FORBIDDEN);
+    }
 
 }

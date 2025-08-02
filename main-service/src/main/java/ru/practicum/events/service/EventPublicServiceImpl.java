@@ -14,6 +14,7 @@ import ru.practicum.events.mapper.EventMapper;
 import ru.practicum.events.model.Event;
 import ru.practicum.events.model.EventState;
 import ru.practicum.events.repository.EventRepository;
+import ru.practicum.exceptions.BadRequestException;
 import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.stat.client.StatsClient;
 import ru.practicum.stat.dto.EndpointHitDto;
@@ -40,6 +41,10 @@ public class EventPublicServiceImpl implements EventPublicService {
 
     @Override
     public List<EventShortDto> getEvents(EventFilterRequest filter, HttpServletRequest request) {
+        if (filter.getRangeStart() != null && filter.getRangeEnd() != null &&
+                filter.getRangeStart().isAfter(filter.getRangeEnd())) {
+            throw new BadRequestException("rangeStart must be before or equal to rangeEnd");
+        }
         saveHit(request);
 
         Pageable pageable = PageRequest.of(filter.getPage(), filter.getSize());
@@ -91,7 +96,7 @@ public class EventPublicServiceImpl implements EventPublicService {
         LocalDateTime start = LocalDateTime.now().minusYears(40);
         LocalDateTime end   = LocalDateTime.now();
 
-        List<ViewStatsDto> stats = statsClient.getStats(start, end, uris, false); // unique=false
+        List<ViewStatsDto> stats = statsClient.getStats(start, end, uris, true);
 
         return stats.stream()
                 .map(vs -> {

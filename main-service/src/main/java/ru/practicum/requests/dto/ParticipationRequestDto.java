@@ -1,7 +1,11 @@
 package ru.practicum.requests.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.persistence.Column;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import lombok.*;
+import ru.practicum.requests.RequestStatus;
 
 import java.time.LocalDateTime;
 
@@ -18,5 +22,8 @@ public class ParticipationRequestDto {
 
     private Long event;
     private Long requester;
-    private String status;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status")
+    private RequestStatus status;
 }

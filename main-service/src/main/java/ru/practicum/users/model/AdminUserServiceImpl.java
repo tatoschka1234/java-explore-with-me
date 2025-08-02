@@ -1,13 +1,17 @@
 package ru.practicum.users.model;
 
+import jakarta.transaction.Transactional;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import ru.practicum.exceptions.ConflictException;
 import ru.practicum.exceptions.NotFoundException;
 import ru.practicum.users.dto.UserDto;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,11 +34,20 @@ public class AdminUserServiceImpl implements AdminUserService {
         }
     }
 
-    @Override
+    @Transactional
     public UserDto createUser(NewUserRequest dto) {
+        String email = dto.getEmail().trim().toLowerCase(Locale.ROOT);
+
+        if (userRepository.existsByEmailIgnoreCase(email)) {
+            throw new ConflictException("Пользователь с таким email уже существует");
+        }
+
         User user = userRepository.save(UserMapper.toEntity(dto));
+
+
         return UserMapper.toDto(user);
     }
+
 
     @Override
     public void deleteUser(Long id) {

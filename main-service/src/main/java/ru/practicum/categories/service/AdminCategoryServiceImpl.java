@@ -8,6 +8,7 @@ import ru.practicum.categories.dto.*;
 import ru.practicum.categories.mapper.CategoryMapper;
 import ru.practicum.categories.model.Category;
 import ru.practicum.categories.repository.CategoryRepository;
+import ru.practicum.events.repository.EventRepository;
 import ru.practicum.exceptions.ConflictException;
 import ru.practicum.exceptions.NotFoundException;
 
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class AdminCategoryServiceImpl implements AdminCategoryService {
 
     private final CategoryRepository categoryRepository;
+    private final EventRepository eventRepository;
 
     @Override
     public CategoryDto create(NewCategoryDto dto) {
@@ -32,20 +34,20 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
     }
 
     @Override
-    public CategoryDto update(CategoryDto dto) {
-        Category category = categoryRepository.findById(dto.getId())
-                .orElseThrow(() -> new NotFoundException("Категория с id " + dto.getId() + " не найдена."));
+    public CategoryDto update(Long catId, NewCategoryDto dto) {
+        Category category = categoryRepository.findById(catId)
+                .orElseThrow(() -> new NotFoundException("Категория с id " + catId + " не найдена."));
 
-        if (!category.getName().equals(dto.getName())) {
-            Optional<Category> existing = categoryRepository.findByName(dto.getName());
-            if (existing.isPresent()) {
-                throw new ConflictException("Категория с именем '" + dto.getName() + "' уже существует.");
-            }
+        String newName = dto.getName();
+
+        if (!category.getName().equals(newName)) {
+            categoryRepository.findByName(newName).ifPresent(c -> {
+                throw new ConflictException("Категория с именем '" + newName + "' уже существует.");
+            });
         }
 
-        category.setName(dto.getName());
-        Category updated = categoryRepository.save(category);
-        return CategoryMapper.toDto(updated);
+        category.setName(newName);
+        return CategoryMapper.toDto(categoryRepository.save(category));
     }
 
     @Override
@@ -53,7 +55,9 @@ public class AdminCategoryServiceImpl implements AdminCategoryService {
         Category category = categoryRepository.findById(catId)
                 .orElseThrow(() -> new NotFoundException("Категория с id " + catId + " не найдена."));
 
-        // можно добавить проверку на связанные события
+        if (eventRepository.existsByCategoryId(catId)) {
+            throw new ConflictException("Нельзя удалить категорию: к ней привязаны события");
+        }
 
         categoryRepository.delete(category);
     }

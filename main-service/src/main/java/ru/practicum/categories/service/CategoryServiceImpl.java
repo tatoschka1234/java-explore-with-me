@@ -9,7 +9,7 @@ import ru.practicum.exceptions.NotFoundException;
 
 @Service
 @RequiredArgsConstructor
-//        @Transactional(readOnly = true)
+
 public class CategoryServiceImpl implements CategoryService {
     private final CategoryRepository categoryRepository;
 

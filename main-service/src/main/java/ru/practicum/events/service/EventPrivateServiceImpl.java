@@ -1,6 +1,10 @@
 package ru.practicum.events.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import ru.practicum.categories.service.CategoryService;
 import ru.practicum.events.dto.EventFullDto;
@@ -30,12 +34,18 @@ public class EventPrivateServiceImpl implements EventPrivateService {
     private final CategoryService categoryService;
 
     @Override
-    public List<EventShortDto> getUserEvents(Long userId) {
-        List<Event> events = eventRepository.findByInitiatorId(userId);
-        return events.stream()
-                .map(event -> EventMapper.toShortDto(event, 0L))
-                .collect(Collectors.toList());
+    public List<EventShortDto> getUserEvents(Long userId, int from, int size) {
+
+        int page = from / size;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdOn"));
+
+        Page<Event> pageResult = eventRepository.findByInitiatorId(userId, pageable);
+
+        return pageResult.getContent().stream()
+                .map(e -> EventMapper.toShortDto(e, 0L))
+                .toList();
     }
+
 
     @Override
     public EventFullDto createEvent(Long userId, NewEventDto dto) {

@@ -1,11 +1,13 @@
 package ru.practicum.compilations.controller;
 
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.compilations.dto.CompilationDto;
 import ru.practicum.compilations.dto.NewCompilationDto;
+import ru.practicum.compilations.dto.UpdateCompilationRequest;
 import ru.practicum.compilations.service.CompilationAdminService;
 
 @RestController
@@ -17,7 +19,7 @@ public class CompilationAdminController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public CompilationDto create(@RequestBody NewCompilationDto dto) {
+    public CompilationDto create(@RequestBody @Valid NewCompilationDto dto) {
         return service.create(dto);
     }
 
@@ -49,6 +51,12 @@ public class CompilationAdminController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void unpin(@PathVariable Long compId) {
         service.unpin(compId);
+    }
+
+    @PatchMapping("/{compId}")
+    public CompilationDto update(@PathVariable Long compId,
+                                 @RequestBody @Valid UpdateCompilationRequest dto) {
+        return service.update(compId, dto);
     }
 }
 
