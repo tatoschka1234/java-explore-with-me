@@ -32,6 +32,12 @@ public class StatsController {
             @RequestParam(required = false) List<String> uris,
             @RequestParam(defaultValue = "false") boolean unique
     ) {
+        if (end.isBefore(start)) {
+            throw new org.springframework.web.server.ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "start must be before or equal to end"
+            );
+        }
         ViewStatsRequestDto request = ViewStatsRequestDto.builder()
                 .start(start)
                 .end(end)
