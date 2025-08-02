@@ -89,26 +89,22 @@ public class GlobalExceptionHandler {
         return buildError(e.getMessage(), "Forbidden", HttpStatus.FORBIDDEN);
     }
 
-    @ExceptionHandler(ResponseStatusException.class)
-    public ResponseEntity<ErrorResponse> handleResponseStatus(final ResponseStatusException e) {
-        log.warn("{} {}", e.getStatusCode().value(), e.getReason());
-        var httpStatus = HttpStatus.resolve(e.getStatusCode().value());
-        String reason = (httpStatus != null) ? httpStatus.getReasonPhrase() : e.getStatusCode().toString();
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(final ConflictException e) {
+        log.warn("409 Conflict: {}", e.getMessage());
+        return buildError(e.getMessage(), "Integrity constraint violation", HttpStatus.CONFLICT);
+    }
 
-        ErrorResponse body = ErrorResponse.builder()
-                .message(e.getReason())
-                .reason(reason)
-                .status(String.valueOf(e.getStatusCode().value()))
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleThrowableException(final Exception e) {
+        return ErrorResponse.builder()
+                .message(e.getMessage())
+                .reason("Internal server error occurred")
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.toString())
                 .timestamp(LocalDateTime.now())
                 .build();
-
-        return ResponseEntity.status(e.getStatusCode()).body(body);
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleUnexpected(final Exception e) {
-        log.error("500 Internal Server Error", e);
-        return buildError(e.getMessage(), "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
-    }
 
 }
