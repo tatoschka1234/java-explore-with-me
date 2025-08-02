@@ -34,6 +34,7 @@ public class NewEventDto {
     @NotNull
     private Long category;
 
+    @Builder.Default
     private Boolean paid = false;
 
     @PositiveOrZero(message = "Participant limit must be zero or positive")
