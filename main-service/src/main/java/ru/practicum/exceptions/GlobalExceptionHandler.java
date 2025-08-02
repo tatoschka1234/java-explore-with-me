@@ -7,6 +7,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.stream.Collectors;
@@ -88,15 +89,26 @@ public class GlobalExceptionHandler {
         return buildError(e.getMessage(), "Forbidden", HttpStatus.FORBIDDEN);
     }
 
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErrorResponse> handleResponseStatus(final ResponseStatusException e) {
+        log.warn("{} {}", e.getStatusCode().value(), e.getReason());
+        var httpStatus = HttpStatus.resolve(e.getStatusCode().value());
+        String reason = (httpStatus != null) ? httpStatus.getReasonPhrase() : e.getStatusCode().toString();
+
+        ErrorResponse body = ErrorResponse.builder()
+                .message(e.getReason())
+                .reason(reason)
+                .status(String.valueOf(e.getStatusCode().value()))
+                .timestamp(LocalDateTime.now())
+                .build();
+
+        return ResponseEntity.status(e.getStatusCode()).body(body);
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleUnexpected(final Exception e) {
         log.error("500 Internal Server Error", e);
-        return buildError(
-                e.getMessage(),
-                "Internal server error",
-                HttpStatus.INTERNAL_SERVER_ERROR
-        );
+        return buildError(e.getMessage(), "Internal server error", HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
 
 }
