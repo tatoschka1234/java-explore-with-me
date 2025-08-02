@@ -38,4 +38,3 @@ public class EventFullDto {
     private EventState state;
     private LocationDto location;
 }
-

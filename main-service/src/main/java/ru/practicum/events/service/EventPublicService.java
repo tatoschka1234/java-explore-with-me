@@ -9,5 +9,6 @@ import java.util.List;
 
 public interface EventPublicService {
     List<EventShortDto> getEvents(EventFilterRequest filter, HttpServletRequest request);
+
     EventFullDto getEventById(Long eventId, HttpServletRequest request);
 }

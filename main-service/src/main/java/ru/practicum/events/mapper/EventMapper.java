@@ -26,6 +26,7 @@ public class EventMapper {
                 .lon(dto.getLon())
                 .build();
     }
+
     public static EventShortDto toShortDto(Event event, long views) {
         return EventShortDto.builder()
                 .id(event.getId())
@@ -75,7 +76,5 @@ public class EventMapper {
                 .location(toEntity(dto.getLocation()))
                 .build();
     }
-
-
 
 }

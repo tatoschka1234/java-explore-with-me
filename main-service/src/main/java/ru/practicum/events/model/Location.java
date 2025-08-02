@@ -11,6 +11,8 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class Location {
-    @Column(name = "loc_lat", nullable = false) private Double lat;
-    @Column(name = "loc_lon", nullable = false) private Double lon;
+    @Column(name = "loc_lat", nullable = false)
+    private Double lat;
+    @Column(name = "loc_lon", nullable = false)
+    private Double lon;
 }

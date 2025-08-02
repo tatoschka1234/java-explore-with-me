@@ -24,13 +24,13 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     Page<Event> findAllPublished(Pageable pageable);
 
     @Query("""
-    SELECT e FROM Event e
-    WHERE (:users IS NULL OR e.initiator.id IN :users)
-      AND (:states IS NULL OR e.state IN :states)
-      AND (:categories IS NULL OR e.category.id IN :categories)
-      AND (:rangeStart IS NULL OR e.eventDate >= :rangeStart)
-      AND (:rangeEnd   IS NULL OR e.eventDate <= :rangeEnd)
-    """)
+            SELECT e FROM Event e
+            WHERE (:users IS NULL OR e.initiator.id IN :users)
+              AND (:states IS NULL OR e.state IN :states)
+              AND (:categories IS NULL OR e.category.id IN :categories)
+              AND (:rangeStart IS NULL OR e.eventDate >= :rangeStart)
+              AND (:rangeEnd   IS NULL OR e.eventDate <= :rangeEnd)
+            """)
     Page<Event> getEventsByAdmin(@Param("users") List<Long> users,
                                  @Param("states") List<EventState> states,
                                  @Param("categories") List<Long> categories,
@@ -53,5 +53,6 @@ public interface EventRepository extends JpaRepository<Event, Long> {
                                       Pageable pageable);
 
     Optional<Event> findByIdAndInitiatorId(Long eventId, Long initiatorId);
+
     boolean existsByCategoryId(Long categoryId);
 }

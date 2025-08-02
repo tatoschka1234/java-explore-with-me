@@ -8,11 +8,8 @@ import java.util.List;
 
 @Data
 public class EventFilterRequest {
-
     private String text;
-
     private List<Long> categories;
-
     private Boolean paid;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -22,13 +19,8 @@ public class EventFilterRequest {
     private LocalDateTime rangeEnd;
 
     private Boolean onlyAvailable = false;
-
     private String sort = "EVENT_DATE";
-
     private Integer from = 0;
-
     private Integer size = 10;
-
     private int page = 0;
-
 }

@@ -10,12 +10,12 @@ import java.util.List;
 public interface EventAdminService {
 
     List<EventFullDto> getEvents(List<Long> users,
-                                        List<EventState> states,
-                                        List<Long> categories,
-                                        LocalDateTime rangeStart,
-                                        LocalDateTime rangeEnd,
-                                        Integer from,
-                                        Integer size);
+                                 List<EventState> states,
+                                 List<Long> categories,
+                                 LocalDateTime rangeStart,
+                                 LocalDateTime rangeEnd,
+                                 Integer from,
+                                 Integer size);
 
     EventFullDto updateEvent(long id, UpdateEventAdminRequest r);
 }

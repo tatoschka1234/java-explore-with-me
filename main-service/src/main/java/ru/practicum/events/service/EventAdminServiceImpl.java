@@ -32,12 +32,12 @@ public class EventAdminServiceImpl implements EventAdminService {
 
     @Override
     public List<EventFullDto> getEvents(List<Long> users,
-                                               List<EventState> states,
-                                               List<Long> categories,
-                                               LocalDateTime rangeStart,
-                                               LocalDateTime rangeEnd,
-                                               Integer from,
-                                               Integer size) {
+                                        List<EventState> states,
+                                        List<Long> categories,
+                                        LocalDateTime rangeStart,
+                                        LocalDateTime rangeEnd,
+                                        Integer from,
+                                        Integer size) {
 
         if (rangeStart != null && rangeEnd != null) {
             if (!rangeStart.isBefore(rangeEnd)) {
@@ -61,7 +61,6 @@ public class EventAdminServiceImpl implements EventAdminService {
                 .map(e -> EventMapper.toFullDto(e, e.getViews()))
                 .toList();
     }
-
 
 
     @Transactional

@@ -92,9 +92,8 @@ public class EventPublicServiceImpl implements EventPublicService {
     private Map<Long, Long> getViews(List<String> uris) {
         if (uris == null || uris.isEmpty()) return Map.of();
 
-
         LocalDateTime start = LocalDateTime.now().minusYears(40);
-        LocalDateTime end   = LocalDateTime.now();
+        LocalDateTime end = LocalDateTime.now();
 
         List<ViewStatsDto> stats = statsClient.getStats(start, end, uris, true);
 
@@ -108,6 +107,5 @@ public class EventPublicServiceImpl implements EventPublicService {
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue, Long::sum));
     }
-
 
 }
