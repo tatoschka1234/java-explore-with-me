@@ -1,7 +1,6 @@
 package ru.practicum.categories.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.categories.dto.CategoryDto;

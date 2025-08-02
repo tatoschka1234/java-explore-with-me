@@ -25,4 +25,3 @@ public class CategoryPublicController {
         return service.getById(catId);
     }
 }
-
