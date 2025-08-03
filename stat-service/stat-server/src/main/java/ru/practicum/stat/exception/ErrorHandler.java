@@ -2,10 +2,12 @@ package ru.practicum.stat.exception;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -81,5 +83,15 @@ public class ErrorHandler {
         );
     }
 
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Map<String, Object>> handleResponseStatus(ResponseStatusException ex) {
+        Map<String, Object> body = Map.of(
+                "status", ex.getStatusCode().value(),
+                "error", ex.getStatusCode().toString(),
+                "message", ex.getReason(),
+                "timestamp", LocalDateTime.now()
+        );
+        return ResponseEntity.status(ex.getStatusCode()).body(body);
+    }
 
 }
