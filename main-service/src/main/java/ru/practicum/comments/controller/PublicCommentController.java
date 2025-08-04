@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import ru.practicum.comments.dto.CommentDto;
 import ru.practicum.comments.dto.PublicCommentDto;
 import ru.practicum.comments.service.CommentService;
 
@@ -23,4 +22,3 @@ public class PublicCommentController {
         return commentService.getPublicCommentsForEvent(eventId);
     }
 }
-
